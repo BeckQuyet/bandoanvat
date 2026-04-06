@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Model OrderItem - Chi tiet don hang
+ * Luu thong tin san pham, so luong, gia tai thoi diem mua
+ */
 class OrderItem extends Model
 {
     use HasFactory;
