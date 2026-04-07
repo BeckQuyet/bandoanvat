@@ -20,16 +20,7 @@
                         <h1 class="text-xl font-bold text-slate-900">Đơn hàng #{{ $order->id }}</h1>
                         <p class="text-sm text-slate-500 mt-1">Đặt lúc {{ $order->created_at->format('H:i - d/m/Y') }}</p>
                     </div>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold
-                        @switch($order->status_color)
-                            @case('yellow') bg-yellow-100 text-yellow-800 @break
-                            @case('blue') bg-blue-100 text-blue-800 @break
-                            @case('indigo') bg-indigo-100 text-indigo-800 @break
-                            @case('green') bg-green-100 text-green-800 @break
-                            @case('red') bg-red-100 text-red-800 @break
-                            @default bg-slate-100 text-slate-800
-                        @endswitch
-                    ">{{ $order->status_label }}</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold {{ $order->status_color }}">{{ $order->status_label }}</span>
                 </div>
             </div>
 

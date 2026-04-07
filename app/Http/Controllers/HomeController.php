@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
 
+/**
+ * HomeController - Xu ly trang chu va trang chi tiet san pham
+ */
 class HomeController extends Controller
 {
+    // Trang chu: hien thi san pham, loc theo danh muc qua query ?category=slug
     public function index(Request $request)
     {
         $categories = Category::all();
@@ -27,6 +31,7 @@ class HomeController extends Controller
         return view('home', compact('products', 'categories', 'currentCategory'));
     }
 
+    // Trang chi tiet san pham: hien thi thong tin + san pham lien quan cung danh muc
     public function show($id)
     {
         $product = Product::with('category')->findOrFail($id);

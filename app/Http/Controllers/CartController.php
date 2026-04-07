@@ -5,8 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 
+/**
+ * CartController - Xu ly gio hang (luu trong session)
+ * Nguoi dung khong can dang nhap de them san pham vao gio hang
+ */
 class CartController extends Controller
 {
+    // Hien thi trang gio hang voi danh sach san pham va tong tien
     public function index()
     {
         $cart = session()->get('cart', []);
@@ -28,6 +33,7 @@ class CartController extends Controller
         return view('cart.index', compact('items', 'total'));
     }
 
+    // Them san pham vao gio hang (tang so luong neu da co)
     public function add(Request $request, $productId)
     {
         $product = Product::findOrFail($productId);
@@ -39,6 +45,7 @@ class CartController extends Controller
         return redirect()->back()->with('success', "Đã thêm \"{$product->name}\" vào giỏ hàng!");
     }
 
+    // Cap nhat so luong san pham trong gio hang
     public function update(Request $request, $productId)
     {
         $request->validate(['quantity' => 'required|integer|min:1|max:99']);
@@ -52,6 +59,7 @@ class CartController extends Controller
         return redirect()->route('cart.index')->with('success', 'Đã cập nhật số lượng.');
     }
 
+    // Xoa san pham khoi gio hang
     public function remove($productId)
     {
         $cart = session()->get('cart', []);

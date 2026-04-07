@@ -20,16 +20,7 @@
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-3">
                         <span class="text-base font-bold text-slate-900">Đơn #{{ $order->id }}</span>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
-                            @switch($order->status_color)
-                                @case('yellow') bg-yellow-100 text-yellow-800 @break
-                                @case('blue') bg-blue-100 text-blue-800 @break
-                                @case('indigo') bg-indigo-100 text-indigo-800 @break
-                                @case('green') bg-green-100 text-green-800 @break
-                                @case('red') bg-red-100 text-red-800 @break
-                                @default bg-slate-100 text-slate-800
-                            @endswitch
-                        ">{{ $order->status_label }}</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $order->status_color }}">{{ $order->status_label }}</span>
                     </div>
                     <span class="text-sm text-slate-500">{{ $order->created_at->format('d/m/Y H:i') }}</span>
                 </div>
