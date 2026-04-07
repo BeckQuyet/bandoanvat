@@ -17,7 +17,7 @@
             </div>
             @endif
 
-            <form method="POST" action="{{ isset($product) ? route('admin.products.update', $product) : route('admin.products.store') }}">
+            <form method="POST" action="{{ isset($product) ? route('admin.products.update', $product) : route('admin.products.store') }}" enctype="multipart/form-data">
                 @csrf
                 @if(isset($product)) @method('PUT') @endif
 
@@ -43,9 +43,29 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Link hình ảnh</label>
-                        <input type="url" name="image" value="{{ old('image', $product->image ?? '') }}" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-slate-50 focus:bg-white transition" placeholder="https://example.com/image.jpg">
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Số lượng tồn kho</label>
+                        <input type="number" name="quantity" value="{{ old('quantity', $product->quantity ?? 0) }}" required min="0" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-slate-50 focus:bg-white transition" placeholder="VD: 100">
                     </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Tải ảnh lên</label>
+                        <input type="file" name="image_file" accept="image/jpeg,image/png,image/webp"
+                            class="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100 bg-slate-50 transition">
+                        <p class="text-xs text-slate-400 mt-1">JPG, PNG, WEBP - Tối đa 2MB. Ảnh sẽ tự động upload lên Cloudinary.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Hoặc nhập link ảnh</label>
+                        <input type="url" name="image" value="{{ old('image', $product->image ?? '') }}" class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-slate-50 focus:bg-white transition" placeholder="https://example.com/image.jpg">
+                        <p class="text-xs text-slate-400 mt-1">Nếu tải ảnh lên thì link này sẽ bị bỏ qua.</p>
+                    </div>
+
+                    @if(isset($product) && $product->image)
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ảnh hiện tại</label>
+                        <img src="{{ $product->image }}" alt="{{ $product->name }}" class="w-32 h-32 object-cover rounded-lg border border-slate-200">
+                    </div>
+                    @endif
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Mô tả</label>
