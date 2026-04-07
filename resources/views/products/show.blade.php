@@ -77,6 +77,8 @@
                         </div>
                     </div>
 
+                    @if($product->quantity > 0)
+                    <p class="text-sm text-green-600 font-medium mb-4">Còn {{ $product->quantity }} sản phẩm</p>
                     <form method="POST" action="{{ route('cart.add', $product->id) }}" class="mb-4">
                         @csrf
                         <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-xl shadow-sm transition duration-200 flex items-center justify-center gap-2">
@@ -84,6 +86,12 @@
                             Thêm vào giỏ hàng
                         </button>
                     </form>
+                    @else
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 text-center">
+                        <p class="text-red-600 font-bold text-lg">Hết hàng</p>
+                        <p class="text-red-400 text-sm mt-1">Sản phẩm này hiện không còn trong kho</p>
+                    </div>
+                    @endif
 
                     <a href="{{ route('home') }}" class="inline-flex items-center justify-center gap-2 text-orange-600 font-semibold hover:text-orange-700 transition mt-auto">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/></svg>
