@@ -69,6 +69,9 @@
                             <div class="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                 <a href="{{ route('profile.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition">Tài khoản</a>
                                 <a href="{{ route('orders.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition">Đơn hàng</a>
+                                @if(Auth::user()->role === 'admin')
+                                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-orange-600 font-semibold hover:bg-orange-50 transition">Quản trị</a>
+                                @endif
                                 <div class="border-t border-slate-100 my-1"></div>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
