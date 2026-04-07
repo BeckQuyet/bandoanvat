@@ -11,6 +11,33 @@
     </a>
 </div>
 
+<!-- Thanh tim kiem va loc -->
+<form method="GET" action="{{ route('admin.users.index') }}" class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+    <div class="flex flex-col sm:flex-row gap-3">
+        <div class="flex-1">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm theo tên hoặc email..."
+                class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-300 focus:border-orange-400 outline-none transition">
+        </div>
+        <div>
+            <select name="role" class="w-full sm:w-40 border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-300 focus:border-orange-400 outline-none transition bg-white">
+                <option value="">Tất cả vai trò</option>
+                <option value="user" {{ request('role') === 'user' ? 'selected' : '' }}>User</option>
+                <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
+            </select>
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition">
+                Tìm kiếm
+            </button>
+            @if(request('search') || request('role'))
+            <a href="{{ route('admin.users.index') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium px-4 py-2.5 rounded-lg text-sm transition">
+                Xóa lọc
+            </a>
+            @endif
+        </div>
+    </div>
+</form>
+
 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-sm text-left">
