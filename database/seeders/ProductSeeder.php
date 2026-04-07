@@ -133,6 +133,7 @@ class ProductSeeder extends Seeder
             $slug = $productData['category_slug'];
             unset($productData['category_slug']);
             $productData['category_id'] = $categories->get($slug)?->id;
+            $productData['quantity'] = rand(10, 50);
             Product::create($productData);
         }
     }
