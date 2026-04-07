@@ -33,19 +33,31 @@
 <!-- Category Chips -->
 <div class="bg-white border-b border-slate-200 sticky top-16 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1">
-            <a href="{{ route('home') }}" 
-               class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition duration-200 border
-               {{ !isset($currentCategory) ? 'bg-orange-500 text-white border-orange-500 shadow-sm' : 'bg-white text-slate-600 border-slate-200 hover:border-orange-300 hover:text-orange-600 hover:bg-orange-50' }}">
-                Tất cả
-            </a>
-            @foreach($categories as $cat)
-            <a href="{{ route('home', ['category' => $cat->slug]) }}" 
-               class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition duration-200 border
-               {{ (isset($currentCategory) && $currentCategory->id === $cat->id) ? 'bg-orange-500 text-white border-orange-500 shadow-sm' : 'bg-white text-slate-600 border-slate-200 hover:border-orange-300 hover:text-orange-600 hover:bg-orange-50' }}">
-                {{ $cat->name }}
-            </a>
-            @endforeach
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+            <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1 flex-1">
+                <a href="{{ route('home') }}" 
+                   class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition duration-200 border
+                   {{ !isset($currentCategory) && !request('search') ? 'bg-orange-500 text-white border-orange-500 shadow-sm' : 'bg-white text-slate-600 border-slate-200 hover:border-orange-300 hover:text-orange-600 hover:bg-orange-50' }}">
+                    Tất cả
+                </a>
+                @foreach($categories as $cat)
+                <a href="{{ route('home', ['category' => $cat->slug]) }}" 
+                   class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition duration-200 border
+                   {{ (isset($currentCategory) && $currentCategory->id === $cat->id) ? 'bg-orange-500 text-white border-orange-500 shadow-sm' : 'bg-white text-slate-600 border-slate-200 hover:border-orange-300 hover:text-orange-600 hover:bg-orange-50' }}">
+                    {{ $cat->name }}
+                </a>
+                @endforeach
+            </div>
+            <form method="GET" action="{{ route('home') }}" class="flex gap-2 shrink-0">
+                @if(isset($currentCategory))
+                <input type="hidden" name="category" value="{{ $currentCategory->slug }}">
+                @endif
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm sản phẩm..."
+                    class="w-48 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-300 focus:border-orange-400 outline-none transition">
+                <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </button>
+            </form>
         </div>
     </div>
 </div>
@@ -62,7 +74,7 @@
                         Tất cả sản phẩm
                     @endif
                 </h2>
-                <p class="text-slate-500 text-sm mt-1">{{ count($products) }} sản phẩm</p>
+                <p class="text-slate-500 text-sm mt-1">{{ $products->total() }} sản phẩm</p>
             </div>
         </div>
         
@@ -87,6 +99,7 @@
                     
                 <div class="px-5 pb-5 mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
                     <span class="text-xl font-bold text-orange-600">{{ number_format($product->price, 0, ',', '.') }}đ</span>
+                    @if($product->quantity > 0)
                     <form method="POST" action="{{ route('cart.add', $product->id) }}">
                         @csrf
                         <button type="submit" class="bg-orange-50 text-orange-600 hover:bg-orange-600 hover:text-white border border-orange-200 hover:border-orange-600 p-2 rounded-lg shadow-sm transition duration-200" title="Thêm vào giỏ">
@@ -95,6 +108,9 @@
                             </svg>
                         </button>
                     </form>
+                    @else
+                    <span class="bg-red-100 text-red-600 text-xs font-semibold px-3 py-1.5 rounded-lg">Hết hàng</span>
+                    @endif
                 </div>
             </div>
             @empty
@@ -107,6 +123,12 @@
             </div>
             @endforelse
         </div>
+
+        @if($products->hasPages())
+        <div class="mt-8">
+            {{ $products->links() }}
+        </div>
+        @endif
     </div>
 </div>
 @endsection

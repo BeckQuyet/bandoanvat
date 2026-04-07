@@ -11,7 +11,7 @@ use App\Models\Category;
  */
 class HomeController extends Controller
 {
-    // Trang chu: hien thi san pham, loc theo danh muc qua query ?category=slug
+    // Trang chu: hien thi san pham, loc theo danh muc, tim kiem theo ten
     public function index(Request $request)
     {
         $categories = Category::all();
@@ -26,7 +26,11 @@ class HomeController extends Controller
             }
         }
 
-        $products = $query->get();
+        if ($request->filled('search')) {
+            $query->where('name', 'like', "%{$request->search}%");
+        }
+
+        $products = $query->latest()->paginate(12)->withQueryString();
 
         return view('home', compact('products', 'categories', 'currentCategory'));
     }

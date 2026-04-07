@@ -15,12 +15,15 @@ use Illuminate\Support\Facades\Auth;
 class OrderController extends Controller
 {
     // Hien thi danh sach don hang cua nguoi dung hien tai
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::where('user_id', Auth::id())
-            ->with('items.product')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Order::where('user_id', Auth::id())->with('items.product');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->latest()->paginate(10)->withQueryString();
 
         return view('orders.index', compact('orders'));
     }
@@ -41,6 +44,10 @@ class OrderController extends Controller
         foreach ($cart as $productId => $qty) {
             $product = Product::find($productId);
             if ($product) {
+                // Kiem tra ton kho truoc khi dat hang
+                if ($product->quantity < $qty) {
+                    return redirect()->route('cart.index')->with('error', "Sản phẩm \"{$product->name}\" chỉ còn {$product->quantity} trong kho!");
+                }
                 $subtotal = $product->price * $qty;
                 $total += $subtotal;
                 $orderItems[] = [
@@ -62,6 +69,8 @@ class OrderController extends Controller
         // Luu chi tiet tung san pham vao bang order_items
         foreach ($orderItems as $item) {
             $order->items()->create($item);
+            // Tru so luong ton kho
+            Product::where('id', $item['product_id'])->decrement('quantity', $item['quantity']);
         }
 
         // Xoa gio hang sau khi dat hang thanh cong
