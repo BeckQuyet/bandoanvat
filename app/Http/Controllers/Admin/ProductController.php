@@ -13,10 +13,22 @@ use Illuminate\Http\Request;
  */
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('category')->latest()->paginate(10);
-        return view('admin.products.index', compact('products'));
+        $query = Product::with('category');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        $products = $query->latest()->paginate(10)->withQueryString();
+        $categories = Category::all();
+        return view('admin.products.index', compact('products', 'categories'));
     }
 
     public function create()
@@ -31,11 +43,23 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|integer|min:0',
+            'quantity' => 'required|integer|min:0',
+            'image_file' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'image' => 'nullable|url|max:500',
             'category_id' => 'nullable|exists:categories,id',
         ]);
 
-        Product::create($request->only('name', 'description', 'price', 'image', 'category_id'));
+        $data = $request->only('name', 'description', 'price', 'quantity', 'category_id');
+
+        // Upload anh len Cloudinary neu co file
+        if ($request->hasFile('image_file')) {
+            $uploadedFile = $request->file('image_file')->storeOnCloudinary('snackstore/products');
+            $data['image'] = $uploadedFile->getSecurePath();
+        } elseif ($request->filled('image')) {
+            $data['image'] = $request->image;
+        }
+
+        Product::create($data);
 
         return redirect()->route('admin.products.index')->with('success', 'Thêm sản phẩm thành công!');
     }
@@ -52,11 +76,23 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|integer|min:0',
+            'quantity' => 'required|integer|min:0',
+            'image_file' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'image' => 'nullable|url|max:500',
             'category_id' => 'nullable|exists:categories,id',
         ]);
 
-        $product->update($request->only('name', 'description', 'price', 'image', 'category_id'));
+        $data = $request->only('name', 'description', 'price', 'quantity', 'category_id');
+
+        // Upload anh moi len Cloudinary neu co file
+        if ($request->hasFile('image_file')) {
+            $uploadedFile = $request->file('image_file')->storeOnCloudinary('snackstore/products');
+            $data['image'] = $uploadedFile->getSecurePath();
+        } elseif ($request->filled('image')) {
+            $data['image'] = $request->image;
+        }
+
+        $product->update($data);
 
         return redirect()->route('admin.products.index')->with('success', 'Cập nhật sản phẩm thành công!');
     }

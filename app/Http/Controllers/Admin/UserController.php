@@ -12,10 +12,26 @@ use Illuminate\Support\Facades\Hash;
  */
 class UserController extends Controller
 {
-    // Danh sach nguoi dung, phan trang 15 dong
-    public function index()
+    // Danh sach nguoi dung, ho tro tim kiem va loc vai tro
+    public function index(Request $request)
     {
-        $users = User::latest()->paginate(15);
+        $query = User::query();
+
+        // Tim kiem theo ten hoac email
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Loc theo vai tro
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        $users = $query->latest()->paginate(10)->withQueryString();
         return view('admin.users.index', compact('users'));
     }
 
