@@ -60,14 +60,38 @@
                 </div>
                 
                 @auth
-                <form method="POST" action="{{ route('orders.store') }}">
-                    @csrf
-                    <textarea name="note" rows="2" placeholder="Ghi chú cho đơn hàng (tùy chọn)..." 
-                        class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm mb-3 focus:ring-orange-500 focus:border-orange-500 resize-none"></textarea>
-                    <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl shadow-sm transition duration-200">
-                        Đặt hàng
-                    </button>
-                </form>
+                {{-- Ô ghi chú dùng chung cho cả 2 nút --}}
+                <textarea id="order-note" rows="2" placeholder="Ghi chú cho đơn hàng (tùy chọn)..."
+                    class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm mb-3 focus:ring-orange-500 focus:border-orange-500 resize-none"></textarea>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    {{-- Nút đặt hàng COD (giữ nguyên) --}}
+                    <form method="POST" action="{{ route('orders.store') }}" class="flex-1" id="form-cod">
+                        @csrf
+                        <input type="hidden" name="note" id="note-cod">
+                        <button type="submit"
+                            onclick="document.getElementById('note-cod').value = document.getElementById('order-note').value"
+                            class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl shadow-sm transition duration-200 flex items-center justify-center gap-2">
+                            🛍️ Đặt hàng (COD)
+                        </button>
+                    </form>
+
+                    {{-- Nút thanh toán VNPay --}}
+                    <form method="POST" action="{{ route('vnpay.pay') }}" class="flex-1" id="form-vnpay">
+                        @csrf
+                        <input type="hidden" name="note" id="note-vnpay">
+                        <button type="submit"
+                            onclick="document.getElementById('note-vnpay').value = document.getElementById('order-note').value"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-sm transition duration-200 flex items-center justify-center gap-2">
+                            💳 Thanh toán VNPay
+                        </button>
+                    </form>
+                </div>
+
+                {{-- Ghi chú nhỏ bên dưới --}}
+                <p class="text-xs text-slate-400 text-center mt-3">
+                    COD: thanh toán khi nhận hàng &nbsp;|&nbsp; VNPay: thanh toán online qua ATM / QR / Ví
+                </p>
                 @else
                 <div class="text-center">
                     <p class="text-slate-500 text-sm mb-3">Vui lòng đăng nhập để đặt hàng</p>

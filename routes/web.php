@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VNPayController;  // ← THÊM DÒNG NÀY
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
@@ -53,16 +54,20 @@ Route::middleware('auth')->group(function () {
     // Tai khoan ca nhan va doi mat khau
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+    // Thanh toan VNPay
+    Route::post('/vnpay/pay', [VNPayController::class, 'pay'])->name('vnpay.pay');
+    Route::get('/vnpay/return', [VNPayController::class, 'return'])->name('vnpay.return');
 });
 
 // === QUAN TRI VIEN - Yeu cau role 'admin' ===
 // Middleware: auth (phai dang nhap) + admin (kiem tra role)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('products', AdminProductController::class)->except('show'); // CRUD san pham
-    Route::resource('categories', AdminCategoryController::class)->except('show'); // CRUD danh muc
-    Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index'); // Danh sach don hang
-    Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show'); // Chi tiet don
-    Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus'); // Cap nhat trang thai
-    Route::resource('users', AdminUserController::class)->except('show'); // CRUD nguoi dung
+    Route::resource('products', AdminProductController::class)->except('show');
+    Route::resource('categories', AdminCategoryController::class)->except('show');
+    Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+    Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    Route::resource('users', AdminUserController::class)->except('show');
 });
